@@ -29,7 +29,7 @@ function islandora_video_create_mp4(AbstractObject $object, $force = FALSE) {
     $audio_codec = variable_get('islandora_video_mp4_audio_codec', 'aac');
 
     $ffmpeg_executable = variable_get('islandora_video_ffmpeg_path', 'ffmpeg');
-    $command = "$ffmpeg_executable -i $archival_path -f mp4 -vcodec libx264 -preset medium -vf format=yuv420p -acodec $audio_codec -strict -2 -ab 128k -ac 2 -async 1 -movflags faststart $out_file";
+    $command = "$ffmpeg_executable -threads 1 -i $archival_path -f mp4 -vcodec libx264 -preset medium -vf format=yuv420p -acodec $audio_codec -strict -2 -ab 128k -ac 2 -async 1 -movflags faststart $out_file";
     $return_value = FALSE;
     exec($command, $output, $return_value);
     file_delete($archival_file['file']);
@@ -121,7 +121,7 @@ function islandora_video_create_mkv(AbstractObject $object, $force = FALSE) {
     $out_file = $archival_path . '.mkv';
 
     $ffmpeg_executable = variable_get('islandora_video_ffmpeg_path', 'ffmpeg');
-    $command = "$ffmpeg_executable -i $archival_path $out_file";
+    $command = "$ffmpeg_executable -threads 1 -i $archival_path $out_file";
     $return_value = FALSE;
     exec($command, $output, $return_value);
     file_delete($archival_file['file']);
@@ -187,7 +187,7 @@ function islandora_video_create_thumbnail(AbstractObject $object, $force = FALSE
       // Calculate the number of seconds halfway through the video.
       $output_time = floor((($time_array[0] * 360) + ($time_array[1] * 60) + $time_array[2]) / 2);
 
-      $tn_creation = "$ffmpeg_executable -itsoffset -2 -ss $output_time -i $archival_path -vcodec mjpeg -vframes 1 -an -f rawvideo $out_file";
+      $tn_creation = "$ffmpeg_executable -threads 1 -itsoffset -2 -ss $output_time -i $archival_path -vcodec mjpeg -vframes 1 -an -f rawvideo $out_file";
 
       $return_value = FALSE;
       exec($tn_creation, $output, $return_value);
